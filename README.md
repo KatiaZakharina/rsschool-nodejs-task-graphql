@@ -79,7 +79,7 @@ mutation CreatePost($post: PostInput!) {
         "title": "My first post",
         "content": "Lorem ipsum",
         "userId": <<userId>>
-    }   
+    }
 }
 ```
 
@@ -214,7 +214,6 @@ query getUsersWithSubscritions {
 }
 ```
 
-
 12. Update user
 
 ```
@@ -278,6 +277,7 @@ mutation UpdatePost($id: ID!, $post: PostUpdateInput!) {
     }
 }
 ```
+
 15. Update member type
 
 ```
@@ -294,7 +294,7 @@ mutation UpdateMemberType($id: String!, $memberType: MemberTypeUpdateInput!) {
     "id": "basic",
     "memberType": {
         "discount": 100
-    }   
+    }
 }
 ```
 
@@ -326,5 +326,30 @@ mutation SubscribeTo($id: ID!, $subscriberId: ID!) {
 {
     "id": <<userId>>,
     "subscriberId": <<subscriberId>>
+}
+```
+
+17. Limit the complexity of the graphql queries
+    [Link to code](./src/routes/graphql/index.ts#L30)
+
+```
+query getUsersWithSubscritions {
+    users {
+        subscribedToUser {
+            subscribedToUser {
+                subscribedToUser {
+                    subscribedToUser {
+                        subscribedToUser {
+                            subscribedToUser {
+                                subscribedToUser {
+                                    id
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 ```
