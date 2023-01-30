@@ -283,3 +283,53 @@ mutation UpdatePost($id: ID!, $post: PostUpdateInput!) {
     }
 }
 ```
+15. Update member type
+
+```
+mutation UpdateMemberType($id: String!, $memberType: MemberTypeUpdateInput!) {
+  updateMemberType(id: $id, data: $memberType) {
+      discount
+      monthPostsLimit
+  }
+}
+```
+
+```
+{
+    "id": "basic",
+    "memberType": {
+        "discount": 100
+    }   
+}
+```
+
+16. Subscribe to user
+
+```
+mutation SubscribeTo($id: ID!, $subscriberId: ID!) {
+  subscribeUserTo(id: $id, subscriberId: $subscriberId) {
+        id firstName lastName
+        subscribedToUser {
+            id firstName lastName
+        }
+  }
+}
+```
+
+```
+mutation SubscribeTo($id: ID!, $subscriberId: ID!) {
+  subscribeUserTo(id: $id, subscriberId: $subscriberId) {
+        id firstName lastName
+        subscribedToUser {
+            id firstName lastName
+        }
+  }
+}
+```
+
+```
+{
+    "id": <<userId>>,
+    "subscriberId": <<subscriberId>>
+}
+```

@@ -5,7 +5,7 @@ import {
   GraphQLString,
 } from 'graphql';
 
-import { MemberTypes, Post, Profile, User } from './types';
+import { MemberType, Post, Profile, User } from './types';
 import {
   PostInput,
   ProfileInput,
@@ -13,7 +13,7 @@ import {
   UserInput,
   UserUpdateInput,
   PostUpdateInput,
-  MemberTypesUpdateInput
+  MemberTypeUpdateInput
 } from './mutation-types';
 
 const mutationsQuery = new GraphQLObjectType({
@@ -97,18 +97,75 @@ const mutationsQuery = new GraphQLObjectType({
         return contextValue.db.posts.change(id, data);
       },
     },
-    updateMemberTypes: {
-      type: MemberTypes,
+    updateMemberType: {
+      type: MemberType,
       args: {
         id: { type: new GraphQLNonNull(GraphQLString) },
         data: {
-          type: new GraphQLNonNull(MemberTypesUpdateInput),
+          type: new GraphQLNonNull(MemberTypeUpdateInput),
         },
       },
       resolve: function (parent, { id, data }, contextValue) {
         return contextValue.db.memberTypes.change(id, data);
       },
     },
+    subscribeUserTo: {
+      type: User,
+      args: {
+        subscriberId: { type: new GraphQLNonNull(GraphQLID) },
+        id: { type: new GraphQLNonNull(GraphQLID) },
+      },
+      resolve: async function (parent, { subscriberId, id }, contextValue) {
+        const user = await contextValue.db.users.findOne({
+          key: 'id',
+          equals: id,
+        });
+
+        const subscriber = await contextValue.db.users.findOne({
+          key: 'id',
+          equals: subscriberId,
+        });
+
+        if (!subscriber || !user) {
+          return null;
+        }
+
+         user.subscribedToUserIds.push(subscriberId);
+         return contextValue.db.users.change(id, user);
+      }
+    },
+    unsubscribeUserFrom: {
+      type: User,
+      args: {
+        subscriberId: { type: new GraphQLNonNull(GraphQLID) },
+        id: { type: new GraphQLNonNull(GraphQLID) },
+      },
+      resolve: async function (parent, { subscriberId, id }, contextValue) {
+        const user = await contextValue.db.users.findOne({
+          key: 'id',
+          equals: id,
+        });
+
+        const subscriber = await contextValue.db.users.findOne({
+          key: 'id',
+          equals: subscriberId,
+        });
+
+        if (!subscriber || !user) {
+          return null;
+        }
+
+        const index = user.subscribedToUserIds.indexOf(subscriberId);
+        if (index === -1) {
+          return null;
+        }
+  
+        user.subscribedToUserIds.splice(index, 1);
+  
+        const subscribedUser = await contextValue.db.users.change(user.id, user);
+        return subscribedUser;
+      }
+    }
   }),
 });
 

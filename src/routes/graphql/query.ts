@@ -1,6 +1,6 @@
 import { GraphQLObjectType, GraphQLList, GraphQLID } from 'graphql';
 
-import { User, Profile, Post, MemberTypes } from './types';
+import { User, Profile, Post, MemberType } from './types';
 
 const rootQuery = new GraphQLObjectType({
   name: 'RootQueryType',
@@ -24,7 +24,7 @@ const rootQuery = new GraphQLObjectType({
       },
     },
     memberTypes: {
-      type: new GraphQLList(MemberTypes),
+      type: new GraphQLList(MemberType),
       resolve(parent, args, contextValue) {
         return contextValue.db.memberTypes.findMany();
       },
@@ -51,7 +51,7 @@ const rootQuery = new GraphQLObjectType({
       },
     },
     memberType: {
-      type: MemberTypes,
+      type: MemberType,
       args: { id: { type: GraphQLID } },
       resolve(parent, { id }, contextValue) {
         return contextValue.db.memberTypes.findOne({ key: 'id', equals: id });

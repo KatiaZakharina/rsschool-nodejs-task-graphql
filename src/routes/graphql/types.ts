@@ -32,8 +32,8 @@ const Post = new GraphQLObjectType({
   },
 });
 
-const MemberTypes = new GraphQLObjectType({
-  name: 'MemberTypes',
+const MemberType = new GraphQLObjectType({
+  name: 'MemberType',
   fields: {
     id: { type: new GraphQLNonNull(GraphQLString) },
     discount: { type: new GraphQLNonNull(GraphQLInt) },
@@ -88,7 +88,7 @@ const User: GraphQLObjectType = new GraphQLObjectType({
         }),
     },
     memberType: {
-      type: MemberTypes,
+      type: MemberType,
       resolve: (user, args, contextValue) => {
         const profile = contextValue.db.profiles.findOne({
           key: 'userId',
@@ -104,4 +104,4 @@ const User: GraphQLObjectType = new GraphQLObjectType({
   }),
 });
 
-export { Profile, Post, MemberTypes, User };
+export { Profile, Post, MemberType, User };

@@ -39,8 +39,8 @@ const PostInput = new GraphQLInputObjectType({
   },
 });
 
-const MemberTypesInput = new GraphQLInputObjectType({
-  name: "MemberTypesInput",
+const MemberTypeInput = new GraphQLInputObjectType({
+  name: "MemberTypeInput",
   fields: {
     discount: { type: GraphQLInt },
     monthPostsLimit: { type: GraphQLInt },
@@ -86,8 +86,8 @@ const PostUpdateInput = new GraphQLInputObjectType({
 });
 
 
-const MemberTypesUpdateInput = new GraphQLInputObjectType({
-  name: "MemberTypesUpdateInput",
+const MemberTypeUpdateInput = new GraphQLInputObjectType({
+  name: "MemberTypeUpdateInput",
   fields: {
     discount: { type: GraphQLInt },
     monthPostsLimit: { type: GraphQLInt },
@@ -98,10 +98,10 @@ export {
   UserInput,
   ProfileInput,
   PostInput,
-  MemberTypesInput,
+  MemberTypeInput,
   SubscribeToUserInput,
   UserUpdateInput,
   ProfileUpdateInput,
   PostUpdateInput,
-  MemberTypesUpdateInput,
+  MemberTypeUpdateInput,
 };
