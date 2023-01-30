@@ -4,16 +4,31 @@ Use Postman to send requests to the API
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/19185799-40b6687d-ef99-40e6-b7ca-65557e4ec8da?action=collection%2Ffork&collection-url=entityId%3D19185799-40b6687d-ef99-40e6-b7ca-65557e4ec8da%26entityType%3Dcollection%26workspaceId%3Ddf436e13-5c79-480c-867a-cf69916dd26c)
 
-
 Or use this examples
 
 1. Create a user
 
 ```
+mutation CreateUser($user: UserInput!) {
+  createUser(data: $user) {
+    id
+    firstName
+    lastName
+    email
+  }
+}
+```
+
+Variables:
+
+```
 {
-    "firstName": "Ivan",
-    "lastName": "Ivanov",
-    "email": "ivanov.ivan@gmail.com"
+    "user": {
+        "firstName": "Ivan",
+        "lastName": "Ivanov",
+        "email": "ivanov.ivan@gmail.com"
+    }
+}
 ```
 
 2. Copy user id for further requests
@@ -21,20 +36,49 @@ Or use this examples
 3. Create a profile
 
 ```
+mutation CreateProfile($profile: ProfileInput!) {
+  createProfile(data: $profile) {
+      birthday
+      userId
+      memberTypeId
+  }
+}
+```
+
+```
 {
-    "avatar": "http://placekitten.com/200/300",
-    "sex": "male",
-    "birthday": "1043927212466",
-    "country": "Belarus",
-    "street": "street",
-    "city": "Minsk",
-    "memberTypeId": "basic",
-    "userId": <<userId>>
+    "profile": {
+        "avatar": "http://placekitten.com/200/300",
+        "sex": "male",
+        "birthday": "1043927212466",
+        "country": "Belarus",
+        "street": "street",
+        "city": "Minsk",
+        "memberTypeId": "basic",
+        "userId": <<userId>>
+    }
 }
 ```
 
 4. Create a post
 
+```
+mutation CreatePost($post: PostInput!) {
+  createPost(data: $post) {
+      title
+      content
+      userId
+  }
+}
+
+```
+{
+    "post": {
+        "title": "My first post",
+        "content": "Lorem ipsum",
+        "userId": "49b9a1f7-e447-44d2-aafe-7c053e725f32"
+    }   
+}
 ```
 {
     "title": "My first post",
@@ -131,9 +175,9 @@ query getExtendedUser($userId: ID!){
 ```
 query getUsersWithUserSubscribed {
     users {
-        id firstName lastName 
+        id firstName lastName
         profile {
-           id avatar sex birthday country street city memberTypeId 
+           id avatar sex birthday country street city memberTypeId
         }
         userSubscribedTo {
             id firstName lastName
@@ -147,7 +191,7 @@ query getUsersWithUserSubscribed {
 ```
 query getUserWithsubscribedToUser($userId: ID!){
     user(id: $userId) {
-        id firstName lastName 
+        id firstName lastName
         posts {
             id title content
         }
@@ -158,13 +202,12 @@ query getUserWithsubscribedToUser($userId: ID!){
 }
 ```
 
-
 11. Check 2.7
 
 ```
 query getUsersWithSubscritions {
     users {
-        id firstName lastName 
+        id firstName lastName
         subscribedToUser {
             id firstName lastName
         }
