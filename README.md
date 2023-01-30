@@ -312,12 +312,9 @@ mutation SubscribeTo($id: ID!, $subscriberId: ID!) {
 ```
 
 ```
-mutation SubscribeTo($id: ID!, $subscriberId: ID!) {
-  subscribeUserTo(id: $id, subscriberId: $subscriberId) {
-        id firstName lastName
-        subscribedToUser {
-            id firstName lastName
-        }
+mutation UnsubscribeFrom($id: ID!, $subscriberId: ID!) {
+  unsubscribeUserFrom(id: $id, subscriberId: $subscriberId) {
+        id firstName lastName subscribedToUserIds
   }
 }
 ```
