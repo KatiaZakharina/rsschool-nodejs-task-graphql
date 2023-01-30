@@ -1,7 +1,20 @@
-import { GraphQLNonNull, GraphQLObjectType } from 'graphql';
+import {
+  GraphQLID,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLString,
+} from 'graphql';
 
-import { Post, Profile, User } from './types';
-import { PostInput, ProfileInput, UserInput } from './mutation-types';
+import { MemberTypes, Post, Profile, User } from './types';
+import {
+  PostInput,
+  ProfileInput,
+  ProfileUpdateInput,
+  UserInput,
+  UserUpdateInput,
+  PostUpdateInput,
+  MemberTypesUpdateInput
+} from './mutation-types';
 
 const mutationsQuery = new GraphQLObjectType({
   name: 'Mutation',
@@ -46,6 +59,54 @@ const mutationsQuery = new GraphQLObjectType({
       },
       resolve: function (parent, { data }, contextValue) {
         return contextValue.db.posts.create(data);
+      },
+    },
+    updateUser: {
+      type: User,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        data: {
+          type: new GraphQLNonNull(UserUpdateInput),
+        },
+      },
+      resolve: function (parent, { id, data }, contextValue) {
+        return contextValue.db.users.change(id, data);
+      },
+    },
+    updateProfile: {
+      type: Profile,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        data: {
+          type: new GraphQLNonNull(ProfileUpdateInput),
+        },
+      },
+      resolve: function (parent, { id, data }, contextValue) {
+        return contextValue.db.profiles.change(id, data);
+      },
+    },
+    updatePost: {
+      type: Post,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        data: {
+          type: new GraphQLNonNull(PostUpdateInput),
+        },
+      },
+      resolve: function (parent, { id, data }, contextValue) {
+        return contextValue.db.posts.change(id, data);
+      },
+    },
+    updateMemberTypes: {
+      type: MemberTypes,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLString) },
+        data: {
+          type: new GraphQLNonNull(MemberTypesUpdateInput),
+        },
+      },
+      resolve: function (parent, { id, data }, contextValue) {
+        return contextValue.db.memberTypes.change(id, data);
       },
     },
   }),

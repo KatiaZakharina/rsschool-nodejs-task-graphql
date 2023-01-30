@@ -65,6 +65,7 @@ mutation CreateProfile($profile: ProfileInput!) {
 ```
 mutation CreatePost($post: PostInput!) {
   createPost(data: $post) {
+      id
       title
       content
       userId
@@ -76,7 +77,7 @@ mutation CreatePost($post: PostInput!) {
     "post": {
         "title": "My first post",
         "content": "Lorem ipsum",
-        "userId": "49b9a1f7-e447-44d2-aafe-7c053e725f32"
+        "userId": <<userId>>
     }   
 }
 ```
@@ -214,6 +215,71 @@ query getUsersWithSubscritions {
         userSubscribedTo {
             id firstName lastName
         }
+    }
+}
+```
+
+
+12. Update user
+
+```
+mutation UpdateUser($id: ID!, $user: UserUpdateInput!) {
+  updateUser(id: $id, data: $user) {
+    id
+    firstName
+    lastName
+    email
+  }
+}
+```
+
+```
+{   "id": <<userId>>,
+    "user": {
+        "firstName": "NewName",
+        "email": "ivanov.ivan@gmail.com"
+    }
+}
+```
+
+13. Update profile
+
+```
+mutation UpdateProfile($id: ID!, $profile: ProfileUpdateInput!) {
+  updateProfile(id: $id, data: $profile) {
+      birthday
+      userId
+      memberTypeId
+  }
+}
+```
+
+```
+{
+    "id": <<profileId>>,
+    "profile": {
+        "city": "Grodno",
+    }
+}
+```
+
+14. Update post
+
+```
+mutation UpdatePost($id: ID!, $post: PostUpdateInput!) {
+  updatePost(id: $id, data: $post) {
+      title
+      content
+      userId
+  }
+}
+```
+
+```
+{
+    "id": <<postId>>,
+    "post": {
+        "title": "My updated post",
     }
 }
 ```

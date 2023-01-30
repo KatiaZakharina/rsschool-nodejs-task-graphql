@@ -54,10 +54,54 @@ const SubscribeToUserInput = new GraphQLInputObjectType({
   },
 });
 
+
+const UserUpdateInput = new GraphQLInputObjectType({
+  name: "UserUpdateInput",
+  fields: {
+    firstName: { type: GraphQLString },
+    lastName: { type: GraphQLString },
+    email: { type: GraphQLString },
+  },
+});
+
+const ProfileUpdateInput = new GraphQLInputObjectType({
+  name: "ProfileUpdateInput",
+  fields: {
+    avatar: { type: GraphQLString },
+    sex: { type: GraphQLString },
+    birthday: { type: GraphQLString },
+    country: { type: GraphQLString },
+    street: { type: GraphQLString },
+    city: { type: GraphQLString },
+    memberTypeId: { type: GraphQLString },
+  },
+});
+
+const PostUpdateInput = new GraphQLInputObjectType({
+  name: "PostUpdateInput",
+  fields: {
+    title: { type: GraphQLString },
+    content: { type: GraphQLString },
+  },
+});
+
+
+const MemberTypesUpdateInput = new GraphQLInputObjectType({
+  name: "MemberTypesUpdateInput",
+  fields: {
+    discount: { type: GraphQLInt },
+    monthPostsLimit: { type: GraphQLInt },
+  },
+});
+
 export {
   UserInput,
   ProfileInput,
   PostInput,
   MemberTypesInput,
   SubscribeToUserInput,
+  UserUpdateInput,
+  ProfileUpdateInput,
+  PostUpdateInput,
+  MemberTypesUpdateInput,
 };
