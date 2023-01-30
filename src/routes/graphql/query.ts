@@ -1,6 +1,9 @@
-import { GraphQLObjectType, GraphQLList, GraphQLID } from 'graphql';
+import { GraphQLObjectType, GraphQLList, GraphQLID, } from 'graphql';
 
-import { User, Profile, Post, MemberType } from './types';
+import { User } from './types/user';
+import { Profile } from './types/profile';
+import { Post } from './types/post';
+import { MemberType } from './types/member-type';
 
 const rootQuery = new GraphQLObjectType({
   name: 'RootQueryType',

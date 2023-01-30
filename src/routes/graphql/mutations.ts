@@ -5,16 +5,11 @@ import {
   GraphQLString,
 } from 'graphql';
 
-import { MemberType, Post, Profile, User } from './types';
-import {
-  PostInput,
-  ProfileInput,
-  ProfileUpdateInput,
-  UserInput,
-  UserUpdateInput,
-  PostUpdateInput,
-  MemberTypeUpdateInput
-} from './mutation-types';
+import { MemberType,  MemberTypeUpdateInput} from './types/member-type';
+import { Post, PostInput, PostUpdateInput } from './types/post';
+import { Profile, ProfileInput, ProfileUpdateInput } from './types/profile';
+import { User, UserInput, UserUpdateInput } from './types/user';
+
 
 const mutationsQuery = new GraphQLObjectType({
   name: 'Mutation',
@@ -130,9 +125,9 @@ const mutationsQuery = new GraphQLObjectType({
           return null;
         }
 
-         user.subscribedToUserIds.push(subscriberId);
-         return contextValue.db.users.change(id, user);
-      }
+        user.subscribedToUserIds.push(subscriberId);
+        return contextValue.db.users.change(id, user);
+      },
     },
     unsubscribeUserFrom: {
       type: User,
@@ -159,13 +154,16 @@ const mutationsQuery = new GraphQLObjectType({
         if (index === -1) {
           return null;
         }
-  
+
         user.subscribedToUserIds.splice(index, 1);
-  
-        const subscribedUser = await contextValue.db.users.change(user.id, user);
+
+        const subscribedUser = await contextValue.db.users.change(
+          user.id,
+          user
+        );
         return subscribedUser;
-      }
-    }
+      },
+    },
   }),
 });
 

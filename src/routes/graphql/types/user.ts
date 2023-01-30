@@ -1,47 +1,17 @@
 import {
+  GraphQLID,
+  GraphQLInputObjectType,
+  GraphQLList,
+  GraphQLNonNull,
   GraphQLObjectType,
   GraphQLString,
-  GraphQLList,
-  GraphQLID,
-  GraphQLInt,
-  GraphQLNonNull,
 } from 'graphql';
 
-const Profile = new GraphQLObjectType({
-  name: 'Profile',
-  fields: {
-    id: { type: new GraphQLNonNull(GraphQLID) },
-    avatar: { type: new GraphQLNonNull(GraphQLString) },
-    sex: { type: new GraphQLNonNull(GraphQLString) },
-    birthday: { type: new GraphQLNonNull(GraphQLString) },
-    country: { type: new GraphQLNonNull(GraphQLString) },
-    street: { type: new GraphQLNonNull(GraphQLString) },
-    city: { type: new GraphQLNonNull(GraphQLString) },
-    memberTypeId: { type: new GraphQLNonNull(GraphQLString) },
-    userId: { type: new GraphQLNonNull(GraphQLString) },
-  },
-});
+import { Post } from './post';
+import { Profile } from './profile';
+import { MemberType } from './member-type';
 
-const Post = new GraphQLObjectType({
-  name: 'Post',
-  fields: {
-    id: { type: new GraphQLNonNull(GraphQLID) },
-    title: { type: new GraphQLNonNull(GraphQLString) },
-    content: { type: new GraphQLNonNull(GraphQLString) },
-    userId: { type: new GraphQLNonNull(GraphQLID) },
-  },
-});
-
-const MemberType = new GraphQLObjectType({
-  name: 'MemberType',
-  fields: {
-    id: { type: new GraphQLNonNull(GraphQLString) },
-    discount: { type: new GraphQLNonNull(GraphQLInt) },
-    monthPostsLimit: { type: new GraphQLNonNull(GraphQLString) },
-  },
-});
-
-const User: GraphQLObjectType = new GraphQLObjectType({
+export const User: GraphQLObjectType = new GraphQLObjectType({
   name: 'User',
   fields: () => ({
     id: { type: new GraphQLNonNull(GraphQLID) },
@@ -104,4 +74,20 @@ const User: GraphQLObjectType = new GraphQLObjectType({
   }),
 });
 
-export { Profile, Post, MemberType, User };
+export const UserInput = new GraphQLInputObjectType({
+  name: 'UserInput',
+  fields: {
+    firstName: { type: new GraphQLNonNull(GraphQLString) },
+    lastName: { type: new GraphQLNonNull(GraphQLString) },
+    email: { type: new GraphQLNonNull(GraphQLString) },
+  },
+});
+
+export const UserUpdateInput = new GraphQLInputObjectType({
+  name: 'UserUpdateInput',
+  fields: {
+    firstName: { type: GraphQLString },
+    lastName: { type: GraphQLString },
+    email: { type: GraphQLString },
+  },
+});
