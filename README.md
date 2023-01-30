@@ -1,75 +1,352 @@
-## Assignment: Graphql
-### Tasks:
-1. Add logic to the restful endpoints (users, posts, profiles, member-types folders in ./src/routes).  
-   1.1. npm run test - 100%  
-2. Add logic to the graphql endpoint (graphql folder in ./src/routes).  
-Constraints and logic for gql queries should be done based on restful implementation.  
-For each subtask provide an example of POST body in the PR.  
-All dynamic values should be sent via "variables" field.  
-If the properties of the entity are not specified, then return the id of it.  
-`userSubscribedTo` - these are users that the current user is following.  
-`subscribedToUser` - these are users who are following the current user.  
-   
-   * Get gql requests:  
-   2.1. Get users, profiles, posts, memberTypes - 4 operations in one query.  
-   2.2. Get user, profile, post, memberType by id - 4 operations in one query.  
-   2.3. Get users with their posts, profiles, memberTypes.  
-   2.4. Get user by id with his posts, profile, memberType.  
-   2.5. Get users with their `userSubscribedTo`, profile.  
-   2.6. Get user by id with his `subscribedToUser`, posts.  
-   2.7. Get users with their `userSubscribedTo`, `subscribedToUser` (additionally for each user in `userSubscribedTo`, `subscribedToUser` add their `userSubscribedTo`, `subscribedToUser`).  
-   * Create gql requests:   
-   2.8. Create user.  
-   2.9. Create profile.  
-   2.10. Create post.  
-   2.11. [InputObjectType](https://graphql.org/graphql-js/type/#graphqlinputobjecttype) for DTOs.  
-   * Update gql requests:  
-   2.12. Update user.  
-   2.13. Update profile.  
-   2.14. Update post.  
-   2.15. Update memberType.  
-   2.16. Subscribe to; unsubscribe from.  
-   2.17. [InputObjectType](https://graphql.org/graphql-js/type/#graphqlinputobjecttype) for DTOs.  
+# Test notes
 
-3. Solve `n+1` graphql problem with [dataloader](https://www.npmjs.com/package/dataloader) package in all places where it should be used.  
-   You can use only one "findMany" call per loader to consider this task completed.  
-   3.1. List where the dataloader was used with links to the lines of code (creation in gql context and call in resolver).  
-4. Limit the complexity of the graphql queries by their depth with [graphql-depth-limit](https://www.npmjs.com/package/graphql-depth-limit) package.   
-   4.1. Provide a link to the line of code where it was used.  
-   4.2. Specify a POST body of gql query that ends with an error due to the operation of the rule. Request result should be with `errors` field (and with or without `data:null`) describing the error.  
+Use Postman to send requests to the API
 
-### Description:  
-All dependencies to complete this task are already installed.  
-You are free to install new dependencies as long as you use them.  
-App template was made with fastify, but you don't need to know much about fastify to get the tasks done.  
-All templates for restful endpoints are placed, just fill in the logic for each of them.  
-Use the "db" property of the "fastify" object as a database access methods ("db" is an instance of the DB class => ./src/utils/DB/DB.ts).  
-Body, params have fixed structure for each restful endpoint due to jsonSchema (schema.ts files near index.ts).  
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/19185799-40b6687d-ef99-40e6-b7ca-65557e4ec8da?action=collection%2Ffork&collection-url=entityId%3D19185799-40b6687d-ef99-40e6-b7ca-65557e4ec8da%26entityType%3Dcollection%26workspaceId%3Ddf436e13-5c79-480c-867a-cf69916dd26c)
 
-### Description for the 1 task:
-If the requested entity is missing - send 404 http code.  
-If operation cannot be performed because of the client input - send 400 http code.  
-You can use methods of "reply" to set http code or throw an [http error](https://github.com/fastify/fastify-sensible#fastifyhttperrors).  
-If operation is successfully completed, then return an entity or array of entities from http handler (fastify will stringify object/array and will send it).  
+Or use this examples
 
-Relation fields are only stored in dependent/child entities. E.g. profile stores "userId" field.  
-You are also responsible for verifying that the relations are real. E.g. "userId" belongs to the real user.  
-So when you delete dependent entity, you automatically delete relations with its parents.  
-But when you delete parent entity, you need to delete relations from child entities yourself to keep the data relevant.   
-(In the next rss-school task, you will use a full-fledged database that also can automatically remove relations when the parent is deleted)  
+1. Create a user
 
-To determine that all your restful logic works correctly => run the script "npm run test".  
-But be careful because these tests are integration (E.g. to test "delete" logic => it creates the entity via a "create" endpoint).  
+```
+mutation CreateUser($user: UserInput!) {
+  createUser(data: $user) {
+    id
+    firstName
+    lastName
+    email
+  }
+}
+```
 
-### Description for the 2 task:  
-You are free to create your own gql environment as long as you use predefined graphql endpoint (./src/routes/graphql/index.ts).  
-(or stick to the [default code-first](https://github.dev/graphql/graphql-js/blob/ffa18e9de0ae630d7e5f264f72c94d497c70016b/src/__tests__/starWarsSchema.ts))  
+Variables:
 
-### Description for the 3 task:
-If you have chosen a non-default gql environment, then the connection of some functionality may differ, be sure to report this in the PR.  
+```
+{
+    "user": {
+        "firstName": "Ivan",
+        "lastName": "Ivanov",
+        "email": "ivanov.ivan@gmail.com"
+    }
+}
+```
 
-### Description for the 4 task:  
-If you have chosen a non-default gql environment, then the connection of some functionality may differ, be sure to report this in the PR.  
-Limit the complexity of the graphql queries by their depth with "graphql-depth-limit" package.  
-E.g. User can refer to other users via properties `userSubscribedTo`, `subscribedToUser` and users within them can also have `userSubscribedTo`, `subscribedToUser` and so on.  
-Your task is to add a new rule (created by "graphql-depth-limit") in [validation](https://graphql.org/graphql-js/validation/) to limit such nesting to (for example) 6 levels max.
+2. Copy user id for further requests
+
+3. Create a profile
+
+```
+mutation CreateProfile($profile: ProfileInput!) {
+  createProfile(data: $profile) {
+      birthday
+      userId
+      memberTypeId
+  }
+}
+```
+
+```
+{
+    "profile": {
+        "avatar": "http://placekitten.com/200/300",
+        "sex": "male",
+        "birthday": "1043927212466",
+        "country": "Belarus",
+        "street": "street",
+        "city": "Minsk",
+        "memberTypeId": "basic",
+        "userId": <<userId>>
+    }
+}
+```
+
+4. Create a post
+
+```
+mutation CreatePost($post: PostInput!) {
+  createPost(data: $post) {
+      id
+      title
+      content
+      userId
+  }
+}
+```
+
+```
+{
+    "post": {
+        "title": "My first post",
+        "content": "Lorem ipsum",
+        "userId": <<userId>>
+    }
+}
+```
+
+5. Check 2.1
+
+```
+query getAllEntities {
+    users {
+        id firstName lastName email subscribedToUserIds
+    }
+    profiles {
+        id avatar sex birthday country street city memberTypeId userId
+    }
+    posts {
+        id title content userId
+    }
+    memberTypes {
+        id discount monthPostsLimit
+    }
+}
+```
+
+6. Check 2.2
+
+```
+query GetEntitiesByItsId(
+    $userId: ID!,
+    $profileId: ID!,
+    $postId: ID!,
+    $memberTypeId: ID!
+) {
+    user(id: $userId) {
+        id firstName lastName email subscribedToUserIds
+    }
+    profile(id: $profileId) {
+        id avatar sex birthday country street city memberTypeId userId
+    }
+    post(id: $postId) {
+        id title content userId
+    }
+    memberType(id: $memberTypeId) {
+        id discount monthPostsLimit
+    }
+}
+```
+
+7. Check 2.3
+
+```
+query getExtendedUsers {
+    users {
+        firstName
+        lastName
+        posts {
+            id title content
+        }
+        profile {
+            id avatar sex birthday country street city memberTypeId
+        }
+        memberType {
+            id discount monthPostsLimit
+        }
+    }
+}
+```
+
+8. Check 2.4
+
+```
+query getExtendedUser($userId: ID!){
+    user(id: $userId) {
+        firstName
+        lastName
+        posts {
+            id title content
+        }
+        profile {
+            id avatar sex birthday country street city memberTypeId
+        }
+        memberType {
+            id discount monthPostsLimit
+        }
+    }
+}
+```
+
+9. Check 2.5
+
+```
+query getUsersWithUserSubscribed {
+    users {
+        id firstName lastName
+        profile {
+           id avatar sex birthday country street city memberTypeId
+        }
+        userSubscribedTo {
+            id firstName lastName
+        }
+    }
+}
+```
+
+10. Check 2.6
+
+```
+query getUserWithsubscribedToUser($userId: ID!){
+    user(id: $userId) {
+        id firstName lastName
+        posts {
+            id title content
+        }
+        subscribedToUser {
+            id firstName lastName
+        }
+    }
+}
+```
+
+11. Check 2.7
+
+```
+query getUsersWithSubscritions {
+    users {
+        id firstName lastName
+        subscribedToUser {
+            id firstName lastName
+        }
+        userSubscribedTo {
+            id firstName lastName
+        }
+    }
+}
+```
+
+12. Update user
+
+```
+mutation UpdateUser($id: ID!, $user: UserUpdateInput!) {
+  updateUser(id: $id, data: $user) {
+    id
+    firstName
+    lastName
+    email
+  }
+}
+```
+
+```
+{   "id": <<userId>>,
+    "user": {
+        "firstName": "NewName",
+        "email": "ivanov.ivan@gmail.com"
+    }
+}
+```
+
+13. Update profile
+
+```
+mutation UpdateProfile($id: ID!, $profile: ProfileUpdateInput!) {
+  updateProfile(id: $id, data: $profile) {
+      birthday
+      userId
+      memberTypeId
+  }
+}
+```
+
+```
+{
+    "id": <<profileId>>,
+    "profile": {
+        "city": "Grodno",
+    }
+}
+```
+
+14. Update post
+
+```
+mutation UpdatePost($id: ID!, $post: PostUpdateInput!) {
+  updatePost(id: $id, data: $post) {
+      title
+      content
+      userId
+  }
+}
+```
+
+```
+{
+    "id": <<postId>>,
+    "post": {
+        "title": "My updated post",
+    }
+}
+```
+
+15. Update member type
+
+```
+mutation UpdateMemberType($id: String!, $memberType: MemberTypeUpdateInput!) {
+  updateMemberType(id: $id, data: $memberType) {
+      discount
+      monthPostsLimit
+  }
+}
+```
+
+```
+{
+    "id": "basic",
+    "memberType": {
+        "discount": 100
+    }
+}
+```
+
+16. Subscribe to user
+
+```
+mutation SubscribeTo($id: ID!, $subscriberId: ID!) {
+  subscribeUserTo(id: $id, subscriberId: $subscriberId) {
+        id firstName lastName
+        subscribedToUser {
+            id firstName lastName
+        }
+  }
+}
+```
+
+```
+mutation UnsubscribeFrom($id: ID!, $subscriberId: ID!) {
+  unsubscribeUserFrom(id: $id, subscriberId: $subscriberId) {
+        id firstName lastName subscribedToUserIds
+  }
+}
+```
+
+```
+{
+    "id": <<userId>>,
+    "subscriberId": <<subscriberId>>
+}
+```
+
+17. Limit the complexity of the graphql queries
+    [Link to code](./src/routes/graphql/index.ts#L30)
+
+```
+query getUsersWithSubscritions {
+    users {
+        subscribedToUser {
+            subscribedToUser {
+                subscribedToUser {
+                    subscribedToUser {
+                        subscribedToUser {
+                            subscribedToUser {
+                                subscribedToUser {
+                                    id
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```
