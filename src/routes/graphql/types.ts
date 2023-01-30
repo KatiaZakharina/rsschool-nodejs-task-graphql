@@ -4,11 +4,11 @@ import {
   GraphQLList,
   GraphQLID,
   GraphQLInt,
-  GraphQLNonNull
-} from "graphql";
+  GraphQLNonNull,
+} from 'graphql';
 
 const Profile = new GraphQLObjectType({
-  name: "Profile",
+  name: 'Profile',
   fields: {
     id: { type: new GraphQLNonNull(GraphQLID) },
     avatar: { type: new GraphQLNonNull(GraphQLString) },
@@ -23,7 +23,7 @@ const Profile = new GraphQLObjectType({
 });
 
 const Post = new GraphQLObjectType({
-  name: "Post",
+  name: 'Post',
   fields: {
     id: { type: new GraphQLNonNull(GraphQLID) },
     title: { type: new GraphQLNonNull(GraphQLString) },
@@ -33,7 +33,7 @@ const Post = new GraphQLObjectType({
 });
 
 const MemberTypes = new GraphQLObjectType({
-  name: "MemberTypes",
+  name: 'MemberTypes',
   fields: {
     id: { type: new GraphQLNonNull(GraphQLString) },
     discount: { type: new GraphQLNonNull(GraphQLInt) },
@@ -41,15 +41,67 @@ const MemberTypes = new GraphQLObjectType({
   },
 });
 
-const User = new GraphQLObjectType({
-  name: "User",
-  fields: {
+const User: GraphQLObjectType = new GraphQLObjectType({
+  name: 'User',
+  fields: () => ({
     id: { type: new GraphQLNonNull(GraphQLID) },
     firstName: { type: new GraphQLNonNull(GraphQLString) },
     lastName: { type: new GraphQLNonNull(GraphQLString) },
     email: { type: new GraphQLNonNull(GraphQLString) },
-    subscribedToUserIds: { type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLString))) },
-  },
+    subscribedToUserIds: {
+      type: new GraphQLNonNull(
+        new GraphQLList(new GraphQLNonNull(GraphQLString))
+      ),
+    },
+    subscribedToUser: {
+      type: new GraphQLList(User),
+      resolve: (user, args, contextValue) => {
+        return contextValue.db.users.findMany({
+          key: 'subscribedToUserIds',
+          inArrayAnyOf: user.subscribedToUserIds,
+        });
+      },
+    },
+    userSubscribedTo: {
+      type: new GraphQLList(User),
+      resolve: (user, args, contextValue) => {
+        return contextValue.db.users.findMany({
+          key: 'subscribedToUserIds',
+          inArray: user.id,
+        });
+      },
+    },
+    posts: {
+      type: new GraphQLList(Post),
+      resolve: (user, args, contextValue) =>
+        contextValue.db.posts.findMany({
+          key: 'userId',
+          equals: user.id,
+        }),
+    },
+    profile: {
+      type: Profile,
+      resolve: (user, args, contextValue) =>
+        contextValue.db.profiles.findOne({
+          key: 'userId',
+          equals: user.id,
+        }),
+    },
+    memberType: {
+      type: MemberTypes,
+      resolve: (user, args, contextValue) => {
+        const profile = contextValue.db.profiles.findOne({
+          key: 'userId',
+          equals: user.id,
+        });
+
+        return contextValue.db.memberTypes.findOne({
+          key: 'id',
+          equals: profile.memberTypeId,
+        });
+      },
+    },
+  }),
 });
 
-export {  Profile, Post, MemberTypes, User };
+export { Profile, Post, MemberTypes, User };

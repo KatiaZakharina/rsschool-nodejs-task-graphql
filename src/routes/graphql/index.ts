@@ -25,6 +25,7 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
         schema,
         source,
         contextValue: fastify,
+        variableValues: request.body.variables,
       });
     }
   );
